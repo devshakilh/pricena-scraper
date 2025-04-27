@@ -1,5 +1,5 @@
 "# pricena-scraper" 
-Here’s a sample README file for the "pricena-scraper" project:
+
 
 ````markdown
 # Pricena Scraper
