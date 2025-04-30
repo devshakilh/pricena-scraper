@@ -30,10 +30,15 @@ export class PriyoShopScraper implements Scraper {
 
       // Hypothetical selectors; update based on actual HTML
       $('.product-item').each((_, element) => {
-        const name = $(element).find('.product-title').text().trim() || 'Name not found';
-        const price = $(element).find('.product-price').text().trim() || 'Out Of Stock';
-        const img = $(element).find('.product-image img').attr('src') || 'Image not found';
-        let link = $(element).find('.product-link').attr('href') || 'Link not found';
+        const name =
+          $(element).find('.product-title').text().trim() || 'Name not found';
+        const price =
+          $(element).find('.product-price').text().trim() || 'Out Of Stock';
+        const img =
+          $(element).find('.product-image img').attr('src') ||
+          'Image not found';
+        let link =
+          $(element).find('.product-link').attr('href') || 'Link not found';
         // Ensure absolute URL
         if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
