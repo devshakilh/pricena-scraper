@@ -29,10 +29,13 @@ export class ChaldalScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 
       $('.productBox').each((_, element) => {
-        const name = $(element).find('.productName').text().trim() || 'Name not found';
+        const name =
+          $(element).find('.productName').text().trim() || 'Name not found';
         const price = $(element).find('.price').text().trim() || 'Out Of Stock';
-        const img = $(element).find('.productImage img').attr('src') || 'Image not found';
-        let link = $(element).find('.productLink').attr('href') || 'Link not found';
+        const img =
+          $(element).find('.productImage img').attr('src') || 'Image not found';
+        let link =
+          $(element).find('.productLink').attr('href') || 'Link not found';
         if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
