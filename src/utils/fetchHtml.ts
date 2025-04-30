@@ -3,7 +3,10 @@ import * as cheerio from 'cheerio';
 import { ScraperError } from './scraperError';
 import logger from './logger';
 
-export async function fetchHtml(url: string, retries: number = 3): Promise<cheerio.CheerioAPI> {
+export async function fetchHtml(
+  url: string,
+  retries: number = 3
+): Promise<cheerio.CheerioAPI> {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       logger.info(`Fetching HTML from ${url} (Attempt ${attempt})`);
@@ -11,7 +14,10 @@ export async function fetchHtml(url: string, retries: number = 3): Promise<cheer
       return cheerio.load(response.data);
     } catch (error) {
       if (attempt === retries) {
-        logger.error(`Failed to fetch HTML from ${url} after ${retries} attempts`, { error });
+        logger.error(
+          `Failed to fetch HTML from ${url} after ${retries} attempts`,
+          { error }
+        );
         throw new ScraperError(`Failed to fetch HTML from ${url}`, error);
       }
       logger.warn(`Retrying fetch for ${url} (Attempt ${attempt} failed)`);

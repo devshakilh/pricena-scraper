@@ -28,10 +28,15 @@ export class PriyoShopScraper implements Scraper {
 
       // Adjust selectors based on PriyoShop's actual HTML structure
       $('.product-item').each((_, element) => {
-        const name = $(element).find('.product-title').text().trim() || 'Name not found';
-        const price = $(element).find('.product-price').text().trim() || 'Out Of Stock';
-        const img = $(element).find('.product-image img').attr('src') || 'Image not found';
-        const link = $(element).find('.product-link').attr('href') || 'Link not found';
+        const name =
+          $(element).find('.product-title').text().trim() || 'Name not found';
+        const price =
+          $(element).find('.product-price').text().trim() || 'Out Of Stock';
+        const img =
+          $(element).find('.product-image img').attr('src') ||
+          'Image not found';
+        const link =
+          $(element).find('.product-link').attr('href') || 'Link not found';
         const id = genId();
 
         products.push({ id, name, price, img, link });

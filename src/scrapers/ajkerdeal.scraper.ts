@@ -25,10 +25,14 @@ export class AjkerDealScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 
       $('.product-item').each((_, element) => {
-        const name = $(element).find('.product-title').text().trim() || 'Name not found';
-        const price = $(element).find('.price-tag').text().trim() || 'Out Of Stock';
-        const img = $(element).find('.product-img img').attr('src') || 'Image not found';
-        const link = $(element).find('.product-link').attr('href') || 'Link not found';
+        const name =
+          $(element).find('.product-title').text().trim() || 'Name not found';
+        const price =
+          $(element).find('.price-tag').text().trim() || 'Out Of Stock';
+        const img =
+          $(element).find('.product-img img').attr('src') || 'Image not found';
+        const link =
+          $(element).find('.product-link').attr('href') || 'Link not found';
         const id = genId();
 
         products.push({ id, name, price, img, link });
