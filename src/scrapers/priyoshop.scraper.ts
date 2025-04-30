@@ -12,9 +12,11 @@ import { genId } from '../utils/genId';
 
 export class PriyoShopScraper implements Scraper {
   private baseUrl: string;
+  private domain: string;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string, domain: string) {
     this.baseUrl = baseUrl;
+    this.domain = domain;
   }
 
   async scrape(product: string): Promise<ScraperResult> {
@@ -26,19 +28,20 @@ export class PriyoShopScraper implements Scraper {
       const products: Product[] = [];
       const logo = $('.logo img').attr('src') || 'logo not found';
 
-      // Adjust selectors based on PriyoShop's actual HTML structure
+      // Hypothetical selectors; update based on actual HTML
       $('.product-item').each((_, element) => {
-        const name =
-          $(element).find('.product-title').text().trim() || 'Name not found';
-        const price =
-          $(element).find('.product-price').text().trim() || 'Out Of Stock';
-        const img =
-          $(element).find('.product-image img').attr('src') ||
-          'Image not found';
-        const link =
-          $(element).find('.product-link').attr('href') || 'Link not found';
-        const id = genId();
+        const name = $(element).find('.product-title').text().trim() || 'Name not found';
+        const price = $(element).find('.product-price').text().trim() || 'Out Of Stock';
+        const img = $(element).find('.product-image img').attr('src') || 'Image not found';
+        let link = $(element).find('.product-link').attr('href') || 'Link not found';
+        // Ensure absolute URL
+        if (link.startsWith('/')) {
+          link = `${this.domain}${link}`;
+        } else if (!link.startsWith('http')) {
+          link = `${this.domain}/${link}`;
+        }
 
+        const id = genId();
         products.push({ id, name, price, img, link });
       });
 

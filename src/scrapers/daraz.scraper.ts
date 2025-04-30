@@ -29,10 +29,14 @@ export class DarazScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 
       $('.gridItem--Yd0sa').each((_, element) => {
-        const name = $(element).find('.title--wFj93').text().trim() || 'Name not found';
-        const price = $(element).find('.price--NVB62').text().trim() || 'Out Of Stock';
-        const img = $(element).find('.image--WOyuZ').attr('src') || 'Image not found';
-        let link = $(element).find('.title--wFj93 a').attr('href') || 'Link not found';
+        const name =
+          $(element).find('.title--wFj93').text().trim() || 'Name not found';
+        const price =
+          $(element).find('.price--NVB62').text().trim() || 'Out Of Stock';
+        const img =
+          $(element).find('.image--WOyuZ').attr('src') || 'Image not found';
+        let link =
+          $(element).find('.title--wFj93 a').attr('href') || 'Link not found';
         // Ensure absolute URL
         if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
