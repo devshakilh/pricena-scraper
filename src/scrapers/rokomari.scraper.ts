@@ -29,10 +29,14 @@ export class RokomariScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 
       $('.book-list-wrapper').each((_, element) => {
-        const name = $(element).find('.book-title').text().trim() || 'Name not found';
-        const price = $(element).find('.book-price').text().trim() || 'Out Of Stock';
-        const img = $(element).find('.book-img img').attr('src') || 'Image not found';
-        let link = $(element).find('.book-link').attr('href') || 'Link not found';
+        const name =
+          $(element).find('.book-title').text().trim() || 'Name not found';
+        const price =
+          $(element).find('.book-price').text().trim() || 'Out Of Stock';
+        const img =
+          $(element).find('.book-img img').attr('src') || 'Image not found';
+        let link =
+          $(element).find('.book-link').attr('href') || 'Link not found';
         if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
