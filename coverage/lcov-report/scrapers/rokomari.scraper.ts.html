@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.25% </span>
+                <span class="strong">84.37% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>26/32</span>
+                <span class='fraction'>27/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.11% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>11/18</span>
+                <span class='fraction'>9/18</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.25% </span>
+                <span class="strong">84.37% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>26/32</span>
+                <span class='fraction'>27/32</span>
             </div>
         
             
@@ -125,19 +125,7 @@
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a>
-<a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a>
-<a name='L71'></a><a href='#L71'>71</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -164,11 +152,8 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,10 +164,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -202,12 +187,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-&nbsp;
-import * as cheerio from 'cheerio';
-&nbsp;
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
 import { Scraper } from '../interfaces/scraper.interface';
 import { Product, ScraperResult } from '../interfaces/product.interface';
 import logger from '../utils/logger';
@@ -234,26 +214,23 @@ export class RokomariScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 &nbsp;
       $('.book-list-wrapper').each((_, element) =&gt; {
-        const name =
-          $(element).find('.book-title').text().trim() || <span class="branch-1 cbranch-no" title="branch not covered" >'Name not found';</span>
-        const price =
-          $(element).find('.book-price').text().trim() || <span class="branch-1 cbranch-no" title="branch not covered" >'Out Of Stock';</span>
-        const img =
-          $(element).find('.book-img img').attr('src') || <span class="branch-1 cbranch-no" title="branch not covered" >'Image not found';</span>
+        const name = $(element).find('.book-title').text().trim() || <span class="branch-1 cbranch-no" title="branch not covered" >'Name not found';</span>
+        const price = $(element).find('.book-price').text().trim() || <span class="branch-1 cbranch-no" title="branch not covered" >'Out Of Stock';</span>
+        const img = $(element).find('.book-img img').attr('src') || <span class="branch-1 cbranch-no" title="branch not covered" >'Image not found';</span>
 &nbsp;
-        // Try multiple selectors for the product link
+        // Updated selectors to match &lt;a class="book-title"&gt;
         let link =
-          $(element).find('.book-title a').attr('href') ||
-          $(element).find('.book-img a').attr('href') ||
-          $(element).find('.product-link').attr('href') ||
-          'Link not found';
+          $(element).find('a.book-title').attr('href') ||
+<span class="branch-1 cbranch-no" title="branch not covered" >          $(element).find('.book-img a').attr('href') </span>||
+<span class="branch-2 cbranch-no" title="branch not covered" >          $(element).find('a').attr('href') </span>||
+<span class="branch-3 cbranch-no" title="branch not covered" >          'Link not found';</span>
 &nbsp;
         // Ensure absolute URL
-        if (link === 'Link not found') {
-          logger.warn(`Product link not found for ${name} on Rokomari`);
-        } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (link.startsWith('/')) {</span>
-<span class="cstat-no" title="statement not covered" >          link = `${this.domain}${link}`;</span>
-        } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (!link.startsWith('http')) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (link === 'Link not found') {
+<span class="cstat-no" title="statement not covered" >          logger.warn(`Product link not found for ${name} on Rokomari`);</span>
+        } else if (link.startsWith('/')) {
+          link = `${this.domain}${link}`;
+        } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span><span class="missing-if-branch" title="else path not taken" >E</span>if (!link.startsWith('http')) {</span>
 <span class="cstat-no" title="statement not covered" >          link = `${this.domain}/${link}`;</span>
         }
 &nbsp;
@@ -272,15 +249,14 @@ export class RokomariScraper implements Scraper {
 <span class="cstat-no" title="statement not covered" >      throw new ScraperError(`Error scraping Rokomari for ${product}`, error);</span>
     }
   }
-}
-&nbsp;</pre></td></tr></table></pre>
+}</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-01T05:19:07.615Z
+                at 2025-05-01T05:26:13.024Z
             </div>
         <script src="../prettify.js"></script>
         <script>

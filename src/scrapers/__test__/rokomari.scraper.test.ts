@@ -1,4 +1,3 @@
-
 import * as cheerio from 'cheerio';
 import { RokomariScraper } from '../rokomari.scraper';
 import { fetchHtml } from '../../utils/fetchHtml';
@@ -9,7 +8,10 @@ describe('RokomariScraper', () => {
   let scraper: RokomariScraper;
 
   beforeEach(() => {
-    scraper = new RokomariScraper('https://www.rokomari.com/search?term=', 'https://www.rokomari.com');
+    scraper = new RokomariScraper(
+      'https://www.rokomari.com/search?term=',
+      'https://www.rokomari.com'
+    );
   });
 
   it('should scrape products correctly', async () => {

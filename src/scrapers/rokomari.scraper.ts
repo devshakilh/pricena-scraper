@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import * as cheerio from 'cheerio';
 
 import { Scraper } from '../interfaces/scraper.interface';
 import { Product, ScraperResult } from '../interfaces/product.interface';
@@ -29,18 +25,15 @@ export class RokomariScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 
       $('.book-list-wrapper').each((_, element) => {
-        const name =
-          $(element).find('.book-title').text().trim() || 'Name not found';
-        const price =
-          $(element).find('.book-price').text().trim() || 'Out Of Stock';
-        const img =
-          $(element).find('.book-img img').attr('src') || 'Image not found';
+        const name = $(element).find('.book-title').text().trim() || 'Name not found';
+        const price = $(element).find('.book-price').text().trim() || 'Out Of Stock';
+        const img = $(element).find('.book-img img').attr('src') || 'Image not found';
 
-        // Try multiple selectors for the product link
+        // Updated selectors to match <a class="book-title">
         let link =
-          $(element).find('.book-title a').attr('href') ||
+          $(element).find('a.book-title').attr('href') ||
           $(element).find('.book-img a').attr('href') ||
-          $(element).find('.product-link').attr('href') ||
+          $(element).find('a').attr('href') ||
           'Link not found';
 
         // Ensure absolute URL
