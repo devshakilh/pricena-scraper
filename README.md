@@ -1,4 +1,3 @@
-
 # 📦 Pricena Scraper API
 
 A **TypeScript-based web scraper API** for fetching product data (name, price, image, and link) from multiple e-commerce websites, including **Rokomari** and popular **UK platforms** like **Amazon UK**, **eBay UK**, **Tesco**, and more.
@@ -66,6 +65,7 @@ curl http://localhost:5000/scrape/laptop
 Fetches product data from all configured e-commerce platforms.
 
 **Response (JSON):**
+
 ```json
 [
   {
@@ -115,13 +115,13 @@ pricepoka-scraper/
 
 ## 🛠 Scripts
 
-| Script         | Description                    |
-|----------------|--------------------------------|
-| `pnpm start`   | Run the production server      |
-| `pnpm dev`     | Start dev server with hot reload |
-| `pnpm build`   | Compile TypeScript             |
-| `pnpm lint`    | Run ESLint                     |
-| `pnpm format`  | Format code with Prettier      |
+| Script        | Description                      |
+| ------------- | -------------------------------- |
+| `pnpm start`  | Run the production server        |
+| `pnpm dev`    | Start dev server with hot reload |
+| `pnpm build`  | Compile TypeScript               |
+| `pnpm lint`   | Run ESLint                       |
+| `pnpm format` | Format code with Prettier        |
 
 ---
 
