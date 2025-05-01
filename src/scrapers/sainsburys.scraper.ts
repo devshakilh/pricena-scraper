@@ -2,15 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as cheerio from 'cheerio';
-
+import { fetchHtml } from '../utils/fetchHtml';
+import { genId } from '../utils/genId';
 import { Scraper } from '../interfaces/scraper.interface';
 import { Product, ScraperResult } from '../interfaces/product.interface';
 import logger from '../utils/logger';
 import { ScraperError } from '../utils/scraperError';
-import { fetchHtml } from '../utils/fetchHtml';
-import { genId } from '../utils/genId';
 
-export class TescoScraper implements Scraper {
+export class SainsburysScraper implements Scraper {
   private baseUrl: string;
   private domain: string;
 
@@ -21,21 +20,17 @@ export class TescoScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     const url = `${this.baseUrl}${encodeURIComponent(product)}`;
-    logger.info(`Scraping Tesco for product: ${product}`);
+    logger.info(`Scraping Sainsbury's for product: ${product}`);
 
     try {
       const $ = await fetchHtml(url);
       const products: Product[] = [];
-      const logo = $('.tesco-logo img').attr('src') || 'logo not found';
+      const logo = $('.sainsburys-logo img').attr('src') || 'logo not found';
 
-      $('.product-tile').each((_, element) => {
-        const name =
-          $(element).find('.product-title').text().trim() || 'Name not found';
-        const price =
-          $(element).find('.price').text().trim() || 'Price not available';
-        const img =
-          $(element).find('.product-image img').attr('src') ||
-          'Image not found';
+      $('.product-card').each((_, element) => {
+        const name = $(element).find('.product-title').text().trim() || 'Name not found';
+        const price = $(element).find('.price').text().trim() || 'Price not available';
+        const img = $(element).find('.product-image img').attr('src') || 'Image not found';
 
         let link =
           $(element).find('a.product-link').attr('href') ||
@@ -43,7 +38,7 @@ export class TescoScraper implements Scraper {
           'Link not found';
 
         if (link === 'Link not found') {
-          logger.warn(`Product link not found for ${name} on Tesco`);
+          logger.warn(`Product link not found for ${name} on Sainsbury's`);
         } else if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
@@ -55,14 +50,14 @@ export class TescoScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found on Tesco for ${product}`);
+        logger.warn(`No products found on Sainsbury's for ${product}`);
       }
 
-      logger.info(`Scraped ${products.length} products from Tesco`);
-      return { name: 'Tesco', products, logo };
+      logger.info(`Scraped ${products.length} products from Sainsbury's`);
+      return { name: "Sainsbury's", products, logo };
     } catch (error) {
-      logger.error(`Failed to scrape Tesco for ${product}`, { error });
-      throw new ScraperError(`Error scraping Tesco for ${product}`, error);
+      logger.error(`Failed to scrape Sainsbury's for ${product}`, { error });
+      throw new ScraperError(`Error scraping Sainsbury's for ${product}`, error);
     }
   }
 }
