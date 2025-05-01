@@ -9,7 +9,7 @@ import { Product, ScraperResult } from '../interfaces/product.interface';
 import logger from '../utils/logger';
 import { ScraperError } from '../utils/scraperError';
 
-export class NextScraper implements Scraper {
+export class ScrewfixScraper implements Scraper {
   private baseUrl: string;
   private domain: string;
 
@@ -20,31 +20,25 @@ export class NextScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     const url = `${this.baseUrl}${encodeURIComponent(product)}`;
-    logger.info(`Scraping Next for product: ${product}`);
+    logger.info(`Scraping Screwfix for product: ${product}`);
 
     try {
       const $ = await fetchHtml(url);
       const products: Product[] = [];
-      const logo = $('.next-logo img').attr('src') || 'logo not found';
+      const logo = $('.screwfix-logo img').attr('src') || 'logo not found';
 
-      $('.ProductItem').each((_, element) => {
-        const name =
-          $(element).find('.ProductItem__title').text().trim() ||
-          'Name not found';
-        const price =
-          $(element).find('.ProductItem__price').text().trim() ||
-          'Price not available';
-        const img =
-          $(element).find('.ProductItem__image img').attr('src') ||
-          'Image not found';
+      $('.product-card').each((_, element) => {
+        const name = $(element).find('.product-card__title').text().trim() || 'Name not found';
+        const price = $(element).find('.product-card__price').text().trim() || 'Price not available';
+        const img = $(element).find('.product-card__image img').attr('src') || 'Image not found';
 
         let link =
-          $(element).find('.ProductItem__link').attr('href') ||
+          $(element).find('.product-card__link').attr('href') ||
           $(element).find('a').attr('href') ||
           'Link not found';
 
         if (link === 'Link not found') {
-          logger.warn(`Product link not found for ${name} on Next`);
+          logger.warn(`Product link not found for ${name} on Screwfix`);
         } else if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
@@ -56,14 +50,14 @@ export class NextScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found on Next for ${product}`);
+        logger.warn(`No products found on Screwfix for ${product}`);
       }
 
-      logger.info(`Scraped ${products.length} products from Next`);
-      return { name: 'Next', products, logo };
+      logger.info(`Scraped ${products.length} products from Screwfix`);
+      return { name: 'Screwfix', products, logo };
     } catch (error) {
-      logger.error(`Failed to scrape Next for ${product}`, { error });
-      throw new ScraperError(`Error scraping Next for ${product}`, error);
+      logger.error(`Failed to scrape Screwfix for ${product}`, { error });
+      throw new ScraperError(`Error scraping Screwfix for ${product}`, error);
     }
   }
 }
