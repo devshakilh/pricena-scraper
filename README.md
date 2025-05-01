@@ -1,5 +1,5 @@
 
-# 📦 PricePoka Scraper API
+# 📦 Pricena Scraper API
 
 A **TypeScript-based web scraper API** for fetching product data (name, price, image, and link) from multiple e-commerce websites, including **Rokomari** and popular **UK platforms** like **Amazon UK**, **eBay UK**, **Tesco**, and more.
 
