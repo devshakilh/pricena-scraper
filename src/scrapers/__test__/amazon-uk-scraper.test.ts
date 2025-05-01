@@ -26,7 +26,7 @@ describe('AmazonUKScraper', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks(); 
+    jest.clearAllMocks();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockedPuppeteer.launch.mockResolvedValue(mockBrowser as any);
   });
@@ -57,6 +57,8 @@ describe('AmazonUKScraper', () => {
   it('should handle errors and throw ScraperError', async () => {
     mockedPuppeteer.launch.mockRejectedValue(new Error('Browser failed'));
 
-    await expect(scraper.scrape('phone')).rejects.toThrow('Error scraping Amazon UK for phone');
+    await expect(scraper.scrape('phone')).rejects.toThrow(
+      'Error scraping Amazon UK for phone'
+    );
   });
 });
