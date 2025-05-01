@@ -9,7 +9,7 @@ import { Product, ScraperResult } from '../interfaces/product.interface';
 import logger from '../utils/logger';
 import { ScraperError } from '../utils/scraperError';
 
-export class ArgosScraper implements Scraper {
+export class ASOSScraper implements Scraper {
   private baseUrl: string;
   private domain: string;
 
@@ -20,31 +20,25 @@ export class ArgosScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     const url = `${this.baseUrl}${encodeURIComponent(product)}`;
-    logger.info(`Scraping Argos for product: ${product}`);
+    logger.info(`Scraping ASOS for product: ${product}`);
 
     try {
       const $ = await fetchHtml(url);
       const products: Product[] = [];
-      const logo = $('.argos-logo img').attr('src') || 'logo not found';
+      const logo = $('.header__logo img').attr('src') || 'logo not found';
 
-      $('.ProductCard').each((_, element) => {
-        const name =
-          $(element).find('.ProductCard__title').text().trim() ||
-          'Name not found';
-        const price =
-          $(element).find('.ProductCard__price').text().trim() ||
-          'Price not available';
-        const img =
-          $(element).find('.ProductCard__image img').attr('src') ||
-          'Image not found';
+      $('.product-card').each((_, element) => {
+        const name = $(element).find('.product-card__title').text().trim() || 'Name not found';
+        const price = $(element).find('.product-card__price').text().trim() || 'Price not available';
+        const img = $(element).find('.product-card__image img').attr('src') || 'Image not found';
 
         let link =
-          $(element).find('.ProductCard__link').attr('href') ||
+          $(element).find('a.product-card__link').attr('href') ||
           $(element).find('a').attr('href') ||
           'Link not found';
 
         if (link === 'Link not found') {
-          logger.warn(`Product link not found for ${name} on Argos`);
+          logger.warn(`Product link not found for ${name} on ASOS`);
         } else if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
@@ -56,14 +50,14 @@ export class ArgosScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found on Argos for ${product}`);
+        logger.warn(`No products found on ASOS for ${product}`);
       }
 
-      logger.info(`Scraped ${products.length} products from Argos`);
-      return { name: 'Argos', products, logo };
+      logger.info(`Scraped ${products.length} products from ASOS`);
+      return { name: 'ASOS', products, logo };
     } catch (error) {
-      logger.error(`Failed to scrape Argos for ${product}`, { error });
-      throw new ScraperError(`Error scraping Argos for ${product}`, error);
+      logger.error(`Failed to scrape ASOS for ${product}`, { error });
+      throw new ScraperError(`Error scraping ASOS for ${product}`, error);
     }
   }
 }
