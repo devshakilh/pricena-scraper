@@ -21,7 +21,9 @@ export class AmazonUKScraper implements Scraper {
     try {
       browser = await puppeteer.launch({ headless: true });
       const page = await browser.newPage();
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+      await page.setUserAgent(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      );
       await page.goto(url, { waitUntil: 'networkidle2' });
 
       const products: Product[] = await page.evaluate((domain) => {
@@ -29,11 +31,24 @@ export class AmazonUKScraper implements Scraper {
         const results: Product[] = [];
         items.forEach((item) => {
           const name = item.querySelector('h2 a span')?.textContent?.trim();
-          const price = item.querySelector('.a-price[data-a-size="xl"] .a-offscreen')?.textContent?.trim() || 'Price not available';
-          const img = (item.querySelector('.s-image') as HTMLImageElement)?.getAttribute('src') || 'Image not found';
-          let link = item.querySelector('h2 a')?.getAttribute('href') || 'Link not found';
+          const price =
+            item
+              .querySelector('.a-price[data-a-size="xl"] .a-offscreen')
+              ?.textContent?.trim() || 'Price not available';
+          const img =
+            (item.querySelector('.s-image') as HTMLImageElement)?.getAttribute(
+              'src'
+            ) || 'Image not found';
+          let link =
+            item.querySelector('h2 a')?.getAttribute('href') ||
+            'Link not found';
 
-          if (name && link !== 'Link not found' && !link.includes('/gp/bestsellers') && !link.includes('/sspa/')) {
+          if (
+            name &&
+            link !== 'Link not found' &&
+            !link.includes('/gp/bestsellers') &&
+            !link.includes('/sspa/')
+          ) {
             if (link.startsWith('/')) {
               link = `${domain}${link}`;
             } else if (!link.startsWith('http')) {
@@ -46,7 +61,11 @@ export class AmazonUKScraper implements Scraper {
         return results;
       }, this.domain);
 
-      const logo = await page.$eval('#nav-logo-sprites', (img) => (img as HTMLImageElement).src) || 'logo not found';
+      const logo =
+        (await page.$eval(
+          '#nav-logo-sprites',
+          (img) => (img as HTMLImageElement).src
+        )) || 'logo not found';
 
       if (products.length === 0) {
         logger.warn(`No valid products found on Amazon UK for ${product}`);
