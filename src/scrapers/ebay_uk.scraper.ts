@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+
 import * as cheerio from 'cheerio';
 
 import { Scraper } from '../interfaces/scraper.interface';
@@ -10,7 +11,7 @@ import { ScraperError } from '../utils/scraperError';
 import { fetchHtml } from '../utils/fetchHtml';
 import { genId } from '../utils/genId';
 
-export class AmazonUKScraper implements Scraper {
+export class eBayUKScraper implements Scraper {
   private baseUrl: string;
   private domain: string;
 
@@ -21,29 +22,25 @@ export class AmazonUKScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     const url = `${this.baseUrl}${encodeURIComponent(product)}`;
-    logger.info(`Scraping Amazon UK for product: ${product}`);
+    logger.info(`Scraping eBay UK for product: ${product}`);
 
     try {
       const $ = await fetchHtml(url);
       const products: Product[] = [];
-      const logo = $('.nav-logo-link img').attr('src') || 'logo not found';
+      const logo = $('.ebay-logo img').attr('src') || 'logo not found';
 
-      $('.s-result-item').each((_, element) => {
-        const name =
-          $(element).find('h2 a span').text().trim() || 'Name not found';
-        const price =
-          $(element).find('.a-price .a-offscreen').text().trim() ||
-          'Price not available';
-        const img =
-          $(element).find('img.s-image').attr('src') || 'Image not found';
+      $('.s-item').each((_, element) => {
+        const name = $(element).find('.s-item__title').text().trim() || 'Name not found';
+        const price = $(element).find('.s-item__price').text().trim() || 'Price not available';
+        const img = $(element).find('.s-item__image img').attr('src') || 'Image not found';
 
         let link =
-          $(element).find('h2 a').attr('href') ||
-          $(element).find('.s-product-image-container a').attr('href') ||
+          $(element).find('.s-item__link').attr('href') ||
+          $(element).find('a').attr('href') ||
           'Link not found';
 
         if (link === 'Link not found') {
-          logger.warn(`Product link not found for ${name} on Amazon UK`);
+          logger.warn(`Product link not found for ${name} on eBay UK`);
         } else if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
@@ -55,14 +52,14 @@ export class AmazonUKScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found on Amazon UK for ${product}`);
+        logger.warn(`No products found on eBay UK for ${product}`);
       }
 
-      logger.info(`Scraped ${products.length} products from Amazon UK`);
-      return { name: 'Amazon UK', products, logo };
+      logger.info(`Scraped ${products.length} products from eBay UK`);
+      return { name: 'eBay UK', products, logo };
     } catch (error) {
-      logger.error(`Failed to scrape Amazon UK for ${product}`, { error });
-      throw new ScraperError(`Error scraping Amazon UK for ${product}`, error);
+      logger.error(`Failed to scrape eBay UK for ${product}`, { error });
+      throw new ScraperError(`Error scraping eBay UK for ${product}`, error);
     }
   }
 }
