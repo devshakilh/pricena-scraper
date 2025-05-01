@@ -29,15 +29,20 @@ export class RokomariScraper implements Scraper {
       const logo = $('.logo img').attr('src') || 'logo not found';
 
       $('.book-list-wrapper').each((_, element) => {
-        const name =
-          $(element).find('.book-title').text().trim() || 'Name not found';
-        const price =
-          $(element).find('.book-price').text().trim() || 'Out Of Stock';
-        const img =
-          $(element).find('.book-img img').attr('src') || 'Image not found';
-        let link =
-          $(element).find('.book-link').attr('href') || 'Link not found';
-        if (link.startsWith('/')) {
+        const name = $(element).find('.book-title').text().trim() || 'Name not found';
+        const price = $(element).find('.book-price').text().trim() || 'Out Of Stock';
+        const img = $(element).find('.book-img img').attr('src') || 'Image not found';
+        
+        // Try multiple selectors for the product link
+        let link = $(element).find('.book-title a').attr('href') ||
+                   $(element).find('.book-img a').attr('href') ||
+                   $(element).find('.product-link').attr('href') ||
+                   'Link not found';
+
+        // Ensure absolute URL
+        if (link === 'Link not found') {
+          logger.warn(`Product link not found for ${name} on Rokomari`);
+        } else if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
           link = `${this.domain}/${link}`;
