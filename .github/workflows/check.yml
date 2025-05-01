@@ -19,10 +19,8 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -36,6 +34,15 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm tsc --noEmit
 
-      - name: Run tests (if applicable)
-        run: pnpm test || true
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+          pnpm test || echo "Tests failed, but continuing due to continue-on-error"
         continue-on-error: true
+
+      - name: Upload test coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage
+          path: coverage/
