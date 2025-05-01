@@ -2,15 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as cheerio from 'cheerio';
-
+import { fetchHtml } from '../utils/fetchHtml';
+import { genId } from '../utils/genId';
 import { Scraper } from '../interfaces/scraper.interface';
 import { Product, ScraperResult } from '../interfaces/product.interface';
 import logger from '../utils/logger';
 import { ScraperError } from '../utils/scraperError';
-import { fetchHtml } from '../utils/fetchHtml';
-import { genId } from '../utils/genId';
 
-export class AsdaScraper implements Scraper {
+export class ArgosScraper implements Scraper {
   private baseUrl: string;
   private domain: string;
 
@@ -21,30 +20,25 @@ export class AsdaScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     const url = `${this.baseUrl}${encodeURIComponent(product)}`;
-    logger.info(`Scraping Asda for product: ${product}`);
+    logger.info(`Scraping Argos for product: ${product}`);
 
     try {
       const $ = await fetchHtml(url);
       const products: Product[] = [];
-      const logo = $('.asda-logo img').attr('src') || 'logo not found';
+      const logo = $('.argos-logo img').attr('src') || 'logo not found';
 
-      $('.product').each((_, element) => {
-        const name =
-          $(element).find('.product-title').text().trim() || 'Name not found';
-        const price =
-          $(element).find('.product-price').text().trim() ||
-          'Price not available';
-        const img =
-          $(element).find('.product-image img').attr('src') ||
-          'Image not found';
+      $('.ProductCard').each((_, element) => {
+        const name = $(element).find('.ProductCard__title').text().trim() || 'Name not found';
+        const price = $(element).find('.ProductCard__price').text().trim() || 'Price not available';
+        const img = $(element).find('.ProductCard__image img').attr('src') || 'Image not found';
 
         let link =
-          $(element).find('.product-link').attr('href') ||
+          $(element).find('.ProductCard__link').attr('href') ||
           $(element).find('a').attr('href') ||
           'Link not found';
 
         if (link === 'Link not found') {
-          logger.warn(`Product link not found for ${name} on Asda`);
+          logger.warn(`Product link not found for ${name} on Argos`);
         } else if (link.startsWith('/')) {
           link = `${this.domain}${link}`;
         } else if (!link.startsWith('http')) {
@@ -56,14 +50,14 @@ export class AsdaScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found on Asda for ${product}`);
+        logger.warn(`No products found on Argos for ${product}`);
       }
 
-      logger.info(`Scraped ${products.length} products from Asda`);
-      return { name: 'Asda', products, logo };
-    } catch (error: any) {
-      logger.error(`Failed to scrape Asda for ${product}`, { error });
-      throw new ScraperError(`Error scraping Asda for ${product}`, error);
+      logger.info(`Scraped ${products.length} products from Argos`);
+      return { name: 'Argos', products, logo };
+    } catch (error) {
+      logger.error(`Failed to scrape Argos for ${product}`, { error });
+      throw new ScraperError(`Error scraping Argos for ${product}`, error);
     }
   }
 }
