@@ -28,9 +28,13 @@ export class SainsburysScraper implements Scraper {
       const logo = $('.sainsburys-logo img').attr('src') || 'logo not found';
 
       $('.product-card').each((_, element) => {
-        const name = $(element).find('.product-title').text().trim() || 'Name not found';
-        const price = $(element).find('.price').text().trim() || 'Price not available';
-        const img = $(element).find('.product-image img').attr('src') || 'Image not found';
+        const name =
+          $(element).find('.product-title').text().trim() || 'Name not found';
+        const price =
+          $(element).find('.price').text().trim() || 'Price not available';
+        const img =
+          $(element).find('.product-image img').attr('src') ||
+          'Image not found';
 
         let link =
           $(element).find('a.product-link').attr('href') ||
@@ -57,7 +61,10 @@ export class SainsburysScraper implements Scraper {
       return { name: "Sainsbury's", products, logo };
     } catch (error) {
       logger.error(`Failed to scrape Sainsbury's for ${product}`, { error });
-      throw new ScraperError(`Error scraping Sainsbury's for ${product}`, error);
+      throw new ScraperError(
+        `Error scraping Sainsbury's for ${product}`,
+        error
+      );
     }
   }
 }
