@@ -28,9 +28,15 @@ export class ScrewfixScraper implements Scraper {
       const logo = $('.screwfix-logo img').attr('src') || 'logo not found';
 
       $('.product-card').each((_, element) => {
-        const name = $(element).find('.product-card__title').text().trim() || 'Name not found';
-        const price = $(element).find('.product-card__price').text().trim() || 'Price not available';
-        const img = $(element).find('.product-card__image img').attr('src') || 'Image not found';
+        const name =
+          $(element).find('.product-card__title').text().trim() ||
+          'Name not found';
+        const price =
+          $(element).find('.product-card__price').text().trim() ||
+          'Price not available';
+        const img =
+          $(element).find('.product-card__image img').attr('src') ||
+          'Image not found';
 
         let link =
           $(element).find('.product-card__link').attr('href') ||
