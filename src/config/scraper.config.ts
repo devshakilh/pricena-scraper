@@ -65,7 +65,8 @@ export const scraperSources: ScraperSource[] = [
     name: 'Wafilife',
     baseUrl: 'https://www.wafilife.com/?s=',
     domain: 'https://www.wafilife.com',
-  },  {
+  },
+  {
     key: 'amazon_uk',
     name: 'Amazon UK',
     baseUrl: 'https://www.amazon.co.uk/s?k=',
@@ -110,7 +111,8 @@ export const scraperSources: ScraperSource[] = [
   {
     key: 'marksandspencer',
     name: 'Marks & Spencer',
-    baseUrl: 'https://www.marksandspencer.com/webapp/wcs/stores/servlet/MSSearchCmd?storeId=10151&langId=-24&searchTerm=',
+    baseUrl:
+      'https://www.marksandspencer.com/webapp/wcs/stores/servlet/MSSearchCmd?storeId=10151&langId=-24&searchTerm=',
     domain: 'https://www.marksandspencer.com',
   },
   {
