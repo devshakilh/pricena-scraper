@@ -1,94 +1,149 @@
-PricePoka Scraper API
-A TypeScript-based web scraper API for fetching product data (name, price, image, link) from multiple e-commerce websites, including Rokomari and top UK platforms like Amazon UK, eBay UK, and others.
-Features
+Here's a clean and well-structured **`README.md`** file for your project, designed for clarity, professionalism, and ease of use:
 
-Scrapes product details from 11 e-commerce sites.
-Robust error handling with Winston logging.
-TypeScript for type safety and maintainability.
-Prettier and Husky for code formatting and linting.
-pnpm for efficient package management.
+---
 
-Prerequisites
+```markdown
+# 📦 PricePoka Scraper API
 
-Node.js (>= 18.x)
-pnpm (>= 8.x)
+A **TypeScript-based web scraper API** for fetching product data (name, price, image, and link) from multiple e-commerce websites, including **Rokomari** and popular **UK platforms** like **Amazon UK**, **eBay UK**, **Tesco**, and more.
 
-Installation
+---
 
-Clone the repository:git clone https://github.com/devshakilh/pricena-scraper
+## ✨ Features
+
+- 🔍 Scrapes product details from **11+ e-commerce sites**
+- ⚙️ Robust error handling with **Winston logging**
+- 🔐 Fully typed with **TypeScript** for maintainability
+- 🎨 Code quality enforced via **Prettier**, **ESLint**, and **Husky hooks**
+- ⚡ Uses **pnpm** for fast and reliable package management
+
+---
+
+## 📦 Prerequisites
+
+- [Node.js](https://nodejs.org/) (>= 18.x)
+- [pnpm](https://pnpm.io/) (>= 8.x)
+
+---
+
+## 🚀 Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
 cd pricepoka-scraper
 
+# Install dependencies
+pnpm install
 
-Install dependencies:pnpm install
+# Create a .env file
+echo "PORT=5000" > .env
 
+# Build the project
+pnpm build
+```
 
-Create a .env file:PORT=5000
+---
 
+## 🔧 Usage
 
-Build the project:pnpm build
+```bash
+# Start the production server
+pnpm start
 
+# OR start in development mode with hot reload
+pnpm dev
+```
 
+### ✅ Example API Call
 
-Usage
+```bash
+curl http://localhost:5000/scrape/laptop
+```
 
-Start the server:pnpm start
+---
 
-Or for development with hot reload:pnpm dev
+## 🌐 API Endpoint
 
+### `GET /scrape/:product`
 
-Access the API:curl http://localhost:5000/scrape/<product>
+Fetches product data from all configured e-commerce platforms.
 
-Example: curl http://localhost:5000/scrape/laptop
+**Response (JSON):**
+```json
+[
+  {
+    "name": "Amazon UK",
+    "logo": "https://...logo.png",
+    "products": [
+      {
+        "id": "uuid",
+        "name": "Product Title",
+        "price": "$99.99",
+        "img": "https://...image.jpg",
+        "link": "https://...product-url"
+      }
+    ]
+  },
+  ...
+]
+```
 
-API Endpoint
+---
 
-GET /scrape/:product
-Fetches product data from configured e-commerce sites.
-Response: JSON array of site objects with product details.
+## 🗂️ Project Structure
 
-
-
-Project Structure
+```
 pricepoka-scraper/
 ├── src/
 │   ├── config/         # Scraper configurations
-│   ├── controllers/    # API controllers
+│   ├── controllers/    # API logic
 │   ├── interfaces/     # TypeScript interfaces
 │   ├── middlewares/    # Middleware functions
 │   ├── routes/         # API routes
-│   ├── services/       # Business logic
+│   ├── services/       # Scraper services
 │   ├── utils/          # Utility functions
-│   ├── scrapers/       # Scraper implementations
+│   ├── scrapers/       # Individual scraper implementations
 │   ├── app.ts          # Express app setup
-│   └── server.ts       # Server entry point
-├── logs/               # Winston log files
+│   └── server.ts       # Entry point
+├── logs/               # Winston log output
 ├── .husky/             # Git hooks
+├── .env                # Environment config
 ├── package.json
 ├── tsconfig.json
 ├── .eslintrc.json
 ├── .prettierrc
-└── .env
+```
 
-Scripts
+---
 
-pnpm start: Run the built server.
-pnpm dev: Run with hot reload.
-pnpm build: Compile TypeScript to JavaScript.
-pnpm lint: Run ESLint.
-pnpm format: Run Prettier.
+## 🛠 Scripts
 
-Debugging
+| Script         | Description                    |
+|----------------|--------------------------------|
+| `pnpm start`   | Run the production server      |
+| `pnpm dev`     | Start dev server with hot reload |
+| `pnpm build`   | Compile TypeScript             |
+| `pnpm lint`    | Run ESLint                     |
+| `pnpm format`  | Format code with Prettier      |
 
-Logs are stored in logs/app.log and logs/error.log.
-Check HTML structure of target sites if data extraction fails (e.g., "Link not found").
-Update selectors in src/scrapers/*.scraper.ts as needed.
+---
 
-Contributing
+## 🐛 Debugging
 
-Fork the repository.
-Create a feature branch: git checkout -b feature-name.
-Commit changes: git commit -m "Add feature".
-Push to the branch: git push origin feature-name.
-Submit a pull request.
+- All logs are saved in:
+  - `logs/app.log` (general logs)
+  - `logs/error.log` (errors)
+- If no data is returned (e.g., “Link not found”), check:
+  - The site’s HTML structure (selectors might have changed)
+  - The relevant scraper in `src/scrapers/*.scraper.ts`
 
+---
 
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature-name`
+3. Commit your changes: `git commit -m "Add feature"`
+4. Push to the branch: `git push origin feature-name`
+5. Open a pull request 🚀
