@@ -13,39 +13,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          version: 9
-          run_install: false
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Verify pnpm installation
+      - name: Build and push Docker image
         run: |
-          pnpm --version
-          echo "pnpm installed successfully"
-
-      - name: Install dependencies
-        run: pnpm install
+          docker build -t ghcr.io/${{ github.repository }}/pricena-scraper:latest .
+          docker push ghcr.io/${{ github.repository }}/pricena-scraper:latest
 
       - name: Run Prettier check
-        run: pnpm format:check
+        run: |
+          docker run --rm ghcr.io/${{ github.repository }}/pricena-scraper:latest pnpm format:check
 
       - name: Run ESLint
-        run: pnpm lint
+        run: |
+          docker run --rm ghcr.io/${{ github.repository }}/pricena-scraper:latest pnpm lint
 
       - name: Run TypeScript type check
-        run: pnpm tsc --noEmit
+        run: |
+          docker run --rm ghcr.io/${{ github.repository }}/pricena-scraper:latest pnpm tsc --noEmit
 
       - name: Run tests
         run: |
           echo "Running tests..."
-          pnpm test || echo "Tests failed, but continuing due to continue-on-error"
+          docker run --rm ghcr.io/${{ github.repository }}/pricena-scraper:latest pnpm test || echo "Tests failed, but continuing due to continue-on-error"
         continue-on-error: true
 
       - name: Upload test coverage
