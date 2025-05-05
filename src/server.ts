@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import app from './app';
 import { Server } from 'http';
 import logger from './utils/logger';
@@ -17,16 +21,20 @@ async function main() {
 
 main();
 
-process.on('unhandledRejection', (err) => {
-  logger.error(`Unhandled Rejection detected, shutting down`, { err });
+process.on('unhandledRejection', (err: any) => {
+  logger.error('Unhandled Rejection detected, shutting down', {
+    message: err?.message || String(err),
+    stack: err?.stack || null,
+    raw: err,
+  });
+
   if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
+    server.close(() => process.exit(1));
   } else {
     process.exit(1);
   }
 });
+
 
 process.on('uncaughtException', (err) => {
   logger.error(`Uncaught Exception detected, shutting down`, { err });

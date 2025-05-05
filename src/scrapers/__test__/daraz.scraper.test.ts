@@ -1,4 +1,3 @@
-
 import * as cheerio from 'cheerio';
 import { DarazScraper } from '../daraz.scraper';
 import { fetchHtml } from '../../utils/fetchHtml';
@@ -36,17 +35,27 @@ describe('DarazScraper', () => {
     expect(result).toEqual({
       name: 'Daraz',
       logo: 'logo.png',
-      products: [{ id: '123', name: 'Phone', price: '৳80,000', img: 'phone.jpg', link: `${domain}/phone` }],
+      products: [
+        {
+          id: '123',
+          name: 'Phone',
+          price: '৳80,000',
+          img: 'phone.jpg',
+          link: `${domain}/phone`,
+        },
+      ],
     });
     expect(logger.info).toHaveBeenCalledWith('Scraped 1 products from Daraz');
   });
 
   it('handles no products', async () => {
-    (fetchHtml as jest.Mock).mockResolvedValue(cheerio.load('<div class="logo"><img src="logo.png" /></div>'));
+    (fetchHtml as jest.Mock).mockResolvedValue(
+      cheerio.load('<div class="logo"><img src="logo.png" /></div>')
+    );
     const result = await scraper.scrape('empty');
     expect(result.products).toEqual([]);
-    expect(logger.warn).toHaveBeenCalledWith('No products found on Daraz for empty');
+    expect(logger.warn).toHaveBeenCalledWith(
+      'No products found on Daraz for empty'
+    );
   });
-
- 
 });

@@ -1,3 +1,4 @@
+
 import express, { Application } from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -23,6 +24,10 @@ app.use(router);
 
 app.get('/', (req, res) => {
   res.send("Welcome to the Pricena's Scraper API!");
+});
+
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'OK' });
 });
 
 export default app;
