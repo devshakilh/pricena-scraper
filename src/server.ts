@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
 import app from './app';
 import { Server } from 'http';
 import logger from './utils/logger';
@@ -34,7 +33,6 @@ process.on('unhandledRejection', (err: any) => {
     process.exit(1);
   }
 });
-
 
 process.on('uncaughtException', (err) => {
   logger.error(`Uncaught Exception detected, shutting down`, { err });

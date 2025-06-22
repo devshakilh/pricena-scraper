@@ -18,7 +18,9 @@
     "express": "^4.21.0",
     "express-rate-limit": "^7.5.0",
     "puppeteer": "^24.7.2",
-    "winston": "^3.14.2"
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
