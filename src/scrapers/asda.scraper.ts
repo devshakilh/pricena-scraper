@@ -27,7 +27,9 @@ export class AsdaScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     // Clean and encode product query
-    const query = encodeURIComponent(product.replace(/\s+/g, '+').toLowerCase());
+    const query = encodeURIComponent(
+      product.replace(/\s+/g, '+').toLowerCase()
+    );
     const url = `${this.baseUrl}${query}`;
     logger.info(`Scraping Asda for product: ${product}, URL: ${url}`);
 
@@ -41,7 +43,10 @@ export class AsdaScraper implements Scraper {
         rawHtml = $.html();
       } catch (fetchError) {
         logger.error(`Failed to fetch HTML from ${url}`, { fetchError });
-        throw new ScraperError(`Failed to fetch HTML for ${product}`, fetchError);
+        throw new ScraperError(
+          `Failed to fetch HTML for ${product}`,
+          fetchError
+        );
       }
 
       // Save raw HTML for debugging
@@ -56,11 +61,17 @@ export class AsdaScraper implements Scraper {
       // Verify page content
       if (!$('body').length) {
         logger.error('Empty or invalid HTML received');
-        throw new ScraperError('Empty or invalid HTML received from Asda', null);
+        throw new ScraperError(
+          'Empty or invalid HTML received from Asda',
+          null
+        );
       }
 
       const products: Product[] = [];
-      let logo = $('[class*="logo"] img, [alt*="asda" i] img, .asda-logo img').attr('src') || 'Logo not found';
+      let logo =
+        $('[class*="logo"] img, [alt*="asda" i] img, .asda-logo img').attr(
+          'src'
+        ) || 'Logo not found';
       if (logo !== 'Logo not found' && logo.startsWith('/')) {
         logo = `${this.domain}${logo}`;
       }
@@ -80,14 +91,15 @@ export class AsdaScraper implements Scraper {
             .text()
             .trim() || 'Name not found';
 
-        const priceElement =
-          $(element)
-            .find(
-              '.co-product__price, .product-price, [class*="price"], [itemprop="price"], [data-auto-id="price"]'
-            )
-            .text()
-            .trim();
-        const price = priceElement ? this.cleanPrice(priceElement) : 'Price not available';
+        const priceElement = $(element)
+          .find(
+            '.co-product__price, .product-price, [class*="price"], [itemprop="price"], [data-auto-id="price"]'
+          )
+          .text()
+          .trim();
+        const price = priceElement
+          ? this.cleanPrice(priceElement)
+          : 'Price not available';
 
         let img =
           $(element)
@@ -106,11 +118,17 @@ export class AsdaScraper implements Scraper {
             )
             .attr('href') || 'Link not found';
         if (link !== 'Link not found') {
-          link = link.startsWith('http') ? link : `${this.domain}${link.startsWith('/') ? link : `/${link}`}`;
+          link = link.startsWith('http')
+            ? link
+            : `${this.domain}${link.startsWith('/') ? link : `/${link}`}`;
         }
 
         // Skip invalid entries
-        if (name === 'Name not found' && price === 'Price not available' && link === 'Link not found') {
+        if (
+          name === 'Name not found' &&
+          price === 'Price not available' &&
+          link === 'Link not found'
+        ) {
           logger.warn(`Skipping invalid product at index ${index}`);
           return;
         }
@@ -120,8 +138,12 @@ export class AsdaScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found for ${product}. Possible reasons: incorrect selectors, dynamic content, or no results.`);
-        logger.info(`Inspect ${debugFile} to verify HTML content. Consider using a headless browser for JavaScript-rendered content.`);
+        logger.warn(
+          `No products found for ${product}. Possible reasons: incorrect selectors, dynamic content, or no results.`
+        );
+        logger.info(
+          `Inspect ${debugFile} to verify HTML content. Consider using a headless browser for JavaScript-rendered content.`
+        );
         // Optional: Uncomment to try Puppeteer fallback
         /*
         logger.info('Attempting Puppeteer fallback for dynamic content');
@@ -131,7 +153,9 @@ export class AsdaScraper implements Scraper {
         // ... (repeat parsing logic)
         */
       } else {
-        logger.info(`Scraped ${products.length} products from Asda for ${product}`);
+        logger.info(
+          `Scraped ${products.length} products from Asda for ${product}`
+        );
       }
 
       return { name: 'Asda', products, logo };

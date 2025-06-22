@@ -26,7 +26,9 @@ export class TescoScraper implements Scraper {
   }
 
   async scrape(product: string): Promise<ScraperResult> {
-    const query = encodeURIComponent(product.replace(/\s+/g, '+').toLowerCase());
+    const query = encodeURIComponent(
+      product.replace(/\s+/g, '+').toLowerCase()
+    );
     const url = `${this.baseUrl}${query}`;
     logger.info(`Scraping Tesco for product: ${product}, URL: ${url}`);
 
@@ -34,7 +36,11 @@ export class TescoScraper implements Scraper {
     try {
       browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+        ],
       });
       const page = await browser.newPage();
 
@@ -46,7 +52,9 @@ export class TescoScraper implements Scraper {
 
       // Log failed requests
       page.on('requestfailed', (request) => {
-        logger.warn(`Request failed: ${request.url()} - ${request.failure()?.errorText}`);
+        logger.warn(
+          `Request failed: ${request.url()} - ${request.failure()?.errorText}`
+        );
       });
 
       // Navigate to the page
@@ -60,52 +68,72 @@ export class TescoScraper implements Scraper {
       }
 
       // Check for CAPTCHA or verification
-      const isCaptchaPresent = await page.$(
-        '[id*="captcha"], [class*="captcha"], [id*="verify"], [class*="verify"], [title*="robot"], [src*="recaptcha"]'
-      ) !== null;
+      const isCaptchaPresent =
+        (await page.$(
+          '[id*="captcha"], [class*="captcha"], [id*="verify"], [class*="verify"], [title*="robot"], [src*="recaptcha"]'
+        )) !== null;
       if (isCaptchaPresent) {
         logger.error('CAPTCHA detected on Tesco page');
         throw new ScraperError('CAPTCHA detected, cannot scrape', null);
       }
 
       // Wait for product container or image
-      const productContainerSelector = '.product-item, .product-list li, .product-grid-item'; // Update based on actual DOM
-      await page.waitForSelector(productContainerSelector, { timeout: 40000 }).catch((err) => {
-        logger.warn('Product results container not found, page may not have loaded correctly', { error: err });
-      });
+      const productContainerSelector =
+        '.product-item, .product-list li, .product-grid-item'; // Update based on actual DOM
+      await page
+        .waitForSelector(productContainerSelector, { timeout: 40000 })
+        .catch((err) => {
+          logger.warn(
+            'Product results container not found, page may not have loaded correctly',
+            { error: err }
+          );
+        });
 
       // Scroll to trigger lazy-loading
       for (let i = 0; i < 8; i++) {
         await page.evaluate(() => window.scrollBy(0, window.innerHeight));
-        await new Promise(resolve => setTimeout(resolve, 4000));
+        await new Promise((resolve) => setTimeout(resolve, 4000));
       }
 
       // Save debug files
       const debugDir = path.join(__dirname, 'debug');
       if (!fs.existsSync(debugDir)) fs.mkdirSync(debugDir);
       const debugFile = `tesco_debug_${product.replace(/\s+/g, '_')}`;
-      await page.screenshot({ path: path.join(debugDir, `${debugFile}.png`), fullPage: true });
+      await page.screenshot({
+        path: path.join(debugDir, `${debugFile}.png`),
+        fullPage: true,
+      });
       const html = await page.content();
       fs.writeFileSync(path.join(debugDir, `${debugFile}.html`), html);
-      logger.info(`Saved debug screenshot to ${debugFile}.png and HTML to ${debugFile}.html`);
+      logger.info(
+        `Saved debug screenshot to ${debugFile}.png and HTML to ${debugFile}.html`
+      );
 
       // Evaluate page content
       const products: Product[] = await page.evaluate((domain) => {
-        const items = document.querySelectorAll('.product-item, .product-list li, .product-grid-item');
+        const items = document.querySelectorAll(
+          '.product-item, .product-list li, .product-grid-item'
+        );
         const results: Product[] = [];
         items.forEach((item, index) => {
           const name =
-            item.querySelector('.product-title, .product-details a, .title')?.textContent?.trim() ||
-            'Name not found';
+            item
+              .querySelector('.product-title, .product-details a, .title')
+              ?.textContent?.trim() || 'Name not found';
           const price =
-            item.querySelector('.price, .price-container span, .price-value')?.textContent?.trim() ||
-            'Price not available';
+            item
+              .querySelector('.price, .price-container span, .price-value')
+              ?.textContent?.trim() || 'Price not available';
           const img =
-            item.querySelector('.product-image, .product-img img, img.product')?.getAttribute('src') ||
-            'Image not found';
+            item
+              .querySelector('.product-image, .product-img img, img.product')
+              ?.getAttribute('src') || 'Image not found';
           let link =
-            item.querySelector('.product-title, .product-details a, .product-link')?.getAttribute('href') ||
-            'Link not found';
+            item
+              .querySelector(
+                '.product-title, .product-details a, .product-link'
+              )
+              ?.getAttribute('href') || 'Link not found';
 
           // Log all items for debugging
           console.log(`Item ${index + 1}:`, { name, price, img, link });
@@ -139,15 +167,23 @@ export class TescoScraper implements Scraper {
       }
 
       if (products.length === 0) {
-        logger.warn(`No valid products found on Tesco for ${product}. Check ${debugFile}.html for page content.`);
+        logger.warn(
+          `No valid products found on Tesco for ${product}. Check ${debugFile}.html for page content.`
+        );
       } else {
-        logger.info(`Scraped ${products.length} products from Tesco for ${product}`);
+        logger.info(
+          `Scraped ${products.length} products from Tesco for ${product}`
+        );
       }
 
       return { name: 'Tesco', products, logo };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      logger.error(`Failed to scrape Tesco for ${product}: ${errorMessage}`, { error, url });
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
+      logger.error(`Failed to scrape Tesco for ${product}: ${errorMessage}`, {
+        error,
+        url,
+      });
       throw new ScraperError(`Error scraping Tesco for ${product}`, error);
     } finally {
       if (browser) {

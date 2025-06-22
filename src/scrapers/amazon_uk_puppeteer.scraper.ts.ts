@@ -19,7 +19,9 @@ export class AmazonUKScraper implements Scraper {
 
   async scrape(product: string): Promise<ScraperResult> {
     // Clean and encode product query
-    const query = encodeURIComponent(product.replace(/\s+/g, '+').toLowerCase());
+    const query = encodeURIComponent(
+      product.replace(/\s+/g, '+').toLowerCase()
+    );
     const url = `${this.baseUrl}${query}`;
     logger.info(`Scraping Amazon UK for product: ${product}, URL: ${url}`);
 
@@ -42,23 +44,30 @@ export class AmazonUKScraper implements Scraper {
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
       // Check for CAPTCHA
-      const isCaptchaPresent = await page.$('[id*="captcha"], [id*="captchacharacters"]') !== null;
+      const isCaptchaPresent =
+        (await page.$('[id*="captcha"], [id*="captchacharacters"]')) !== null;
       if (isCaptchaPresent) {
         logger.error('CAPTCHA detected on Amazon UK page');
         throw new ScraperError('CAPTCHA detected, cannot scrape', null);
       }
 
       // Wait for product results to load
-      await page.waitForSelector('.s-main-slot', { timeout: 10000 }).catch(() => {
-        logger.warn('Product results container not found, page may not have loaded correctly');
-      });
+      await page
+        .waitForSelector('.s-main-slot', { timeout: 10000 })
+        .catch(() => {
+          logger.warn(
+            'Product results container not found, page may not have loaded correctly'
+          );
+        });
 
       // Save screenshot and HTML for debugging
       const debugFile = `amazonuk_debug_${product.replace(/\s+/g, '_')}`;
       await page.screenshot({ path: `${debugFile}.png`, fullPage: true });
       const html = await page.content();
       fs.writeFileSync(`${debugFile}.html`, html);
-      logger.info(`Saved debug screenshot to ${debugFile}.png and HTML to ${debugFile}.html`);
+      logger.info(
+        `Saved debug screenshot to ${debugFile}.png and HTML to ${debugFile}.html`
+      );
 
       // Evaluate page content
       const products: Product[] = await page.evaluate((domain) => {
@@ -68,8 +77,11 @@ export class AmazonUKScraper implements Scraper {
         const results: Product[] = [];
         items.forEach((item) => {
           const name =
-            item.querySelector('h2 a span, [class*="title"] span, [class*="product-title"]')?.textContent?.trim() ||
-            'Name not found';
+            item
+              .querySelector(
+                'h2 a span, [class*="title"] span, [class*="product-title"]'
+              )
+              ?.textContent?.trim() || 'Name not found';
           const price =
             item
               .querySelector(
@@ -77,11 +89,15 @@ export class AmazonUKScraper implements Scraper {
               )
               ?.textContent?.trim() || 'Price not available';
           const img =
-            item.querySelector('.s-image, [class*="image"] img, img[data-image-source]')?.getAttribute('src') ||
-            'Image not found';
+            item
+              .querySelector(
+                '.s-image, [class*="image"] img, img[data-image-source]'
+              )
+              ?.getAttribute('src') || 'Image not found';
           let link =
-            item.querySelector('h2 a, [class*="title"] a, a[href*="/dp/"]')?.getAttribute('href') ||
-            'Link not found';
+            item
+              .querySelector('h2 a, [class*="title"] a, a[href*="/dp/"]')
+              ?.getAttribute('href') || 'Link not found';
 
           if (
             name &&
@@ -118,9 +134,13 @@ export class AmazonUKScraper implements Scraper {
       }
 
       if (products.length === 0) {
-        logger.warn(`No valid products found on Amazon UK for ${product}. Check ${debugFile}.html for page content.`);
+        logger.warn(
+          `No valid products found on Amazon UK for ${product}. Check ${debugFile}.html for page content.`
+        );
       } else {
-        logger.info(`Scraped ${products.length} products from Amazon UK for ${product}`);
+        logger.info(
+          `Scraped ${products.length} products from Amazon UK for ${product}`
+        );
       }
 
       return { name: 'Amazon UK', products, logo };

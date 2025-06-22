@@ -17,14 +17,19 @@ export class ArgosScraper implements Scraper {
   private baseUrl: string;
   private domain: string;
 
-  constructor(baseUrl: string = 'https://www.argos.co.uk/search/', domain: string = 'https://www.argos.co.uk') {
+  constructor(
+    baseUrl: string = 'https://www.argos.co.uk/search/',
+    domain: string = 'https://www.argos.co.uk'
+  ) {
     this.baseUrl = baseUrl;
     this.domain = domain;
   }
 
   async scrape(product: string): Promise<ScraperResult> {
     // Clean and encode product query
-    const query = encodeURIComponent(product.replace(/\s+/g, '+').toLowerCase());
+    const query = encodeURIComponent(
+      product.replace(/\s+/g, '+').toLowerCase()
+    );
     const url = `${this.baseUrl}${query}?clickOrigin=searchbar:home:searchterm:${query}`;
     logger.info(`Scraping Argos for product: ${product}, URL: ${url}`);
 
@@ -38,7 +43,10 @@ export class ArgosScraper implements Scraper {
         rawHtml = $.html();
       } catch (fetchError) {
         logger.error(`Failed to fetch HTML from ${url}`, { fetchError });
-        throw new ScraperError(`Failed to fetch HTML for ${product}`, fetchError);
+        throw new ScraperError(
+          `Failed to fetch HTML for ${product}`,
+          fetchError
+        );
       }
 
       // Save raw HTML for debugging
@@ -53,36 +61,51 @@ export class ArgosScraper implements Scraper {
       // Verify page content
       if (!$('body').length) {
         logger.error('Empty or invalid HTML received');
-        throw new ScraperError('Empty or invalid HTML received from Argos', null);
+        throw new ScraperError(
+          'Empty or invalid HTML received from Argos',
+          null
+        );
       }
 
       const products: Product[] = [];
-      let logo = $('[data-test="argos-logo"] img, .argos-logo img, [alt*="argos" i] img, [class*="logo"] img').attr('src') || 'Logo not found';
+      let logo =
+        $(
+          '[data-test="argos-logo"] img, .argos-logo img, [alt*="argos" i] img, [class*="logo"] img'
+        ).attr('src') || 'Logo not found';
       if (logo !== 'Logo not found' && logo.startsWith('/')) {
         logo = `${this.domain}${logo}`;
       }
 
       // Broad selectors for product cards
-      const productCards = $('[data-test="product-card"], .ProductCard, .xs-12--none, [class*="product"], [class*="card"], [data-component="product-card"], [data-product-id]');
+      const productCards = $(
+        '[data-test="product-card"], .ProductCard, .xs-12--none, [class*="product"], [class*="card"], [data-component="product-card"], [data-product-id]'
+      );
       logger.info(`Found ${productCards.length} potential product cards`);
 
       productCards.each((index, element) => {
         const name =
           $(element)
-            .find('[data-test="product-title"], .ProductCard__title, h2, h3, [class*="title"], [class*="name"], [itemprop="name"]')
+            .find(
+              '[data-test="product-title"], .ProductCard__title, h2, h3, [class*="title"], [class*="name"], [itemprop="name"]'
+            )
             .text()
             .trim() || 'Name not found';
 
-        const priceElement =
-          $(element)
-            .find('[data-test="product-price"], .ProductCard__price, [class*="price"], [class*="cost"], [itemprop="price"]')
-            .text()
-            .trim();
-        const price = priceElement ? this.cleanPrice(priceElement) : 'Price not available';
+        const priceElement = $(element)
+          .find(
+            '[data-test="product-price"], .ProductCard__price, [class*="price"], [class*="cost"], [itemprop="price"]'
+          )
+          .text()
+          .trim();
+        const price = priceElement
+          ? this.cleanPrice(priceElement)
+          : 'Price not available';
 
         let img =
           $(element)
-            .find('[data-test="product-image"] img, .ProductCard__image img, [class*="image"] img, [itemprop="image"]')
+            .find(
+              '[data-test="product-image"] img, .ProductCard__image img, [class*="image"] img, [itemprop="image"]'
+            )
             .attr('src') || 'Image not found';
         if (img !== 'Image not found' && img.startsWith('/')) {
           img = `${this.domain}${img}`;
@@ -90,14 +113,22 @@ export class ArgosScraper implements Scraper {
 
         let link =
           $(element)
-            .find('[data-test="product-link"], .ProductCard__link, a[class*="link"], a[itemprop="url"], a')
+            .find(
+              '[data-test="product-link"], .ProductCard__link, a[class*="link"], a[itemprop="url"], a'
+            )
             .attr('href') || 'Link not found';
         if (link !== 'Link not found') {
-          link = link.startsWith('http') ? link : `${this.domain}${link.startsWith('/') ? link : `/${link}`}`;
+          link = link.startsWith('http')
+            ? link
+            : `${this.domain}${link.startsWith('/') ? link : `/${link}`}`;
         }
 
         // Skip invalid entries
-        if (name === 'Name not found' && price === 'Price not available' && link === 'Link not found') {
+        if (
+          name === 'Name not found' &&
+          price === 'Price not available' &&
+          link === 'Link not found'
+        ) {
           logger.warn(`Skipping invalid product at index ${index}`);
           return;
         }
@@ -107,8 +138,12 @@ export class ArgosScraper implements Scraper {
       });
 
       if (products.length === 0) {
-        logger.warn(`No products found for ${product}. Possible reasons: incorrect selectors, dynamic content, or no results.`);
-        logger.info(`Inspect ${debugFile} to verify HTML content. Consider using a headless browser for JavaScript-rendered content.`);
+        logger.warn(
+          `No products found for ${product}. Possible reasons: incorrect selectors, dynamic content, or no results.`
+        );
+        logger.info(
+          `Inspect ${debugFile} to verify HTML content. Consider using a headless browser for JavaScript-rendered content.`
+        );
         // Optional: Uncomment to try Puppeteer fallback
         /*
         logger.info('Attempting Puppeteer fallback for dynamic content');
@@ -118,7 +153,9 @@ export class ArgosScraper implements Scraper {
         // ... (repeat parsing logic)
         */
       } else {
-        logger.info(`Scraped ${products.length} products from Argos for ${product}`);
+        logger.info(
+          `Scraped ${products.length} products from Argos for ${product}`
+        );
       }
 
       return { name: 'Argos', products, logo };

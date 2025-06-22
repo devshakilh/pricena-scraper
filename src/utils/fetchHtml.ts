@@ -17,7 +17,7 @@
 //   for (let attempt = 1; attempt <= retries; attempt++) {
 //     try {
 //       logger.info(`Fetching HTML from ${url} (Attempt ${attempt})`);
-//       const response = await axios.get(url, { 
+//       const response = await axios.get(url, {
 //         headers,
 //         timeout: 10000,
 //         maxRedirects: 5,
